@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архив работ · Жогин Артём</title>
+    <style>
+        /* Базовые сбросы */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            background: #0b0e14;
+            background-image: radial-gradient(circle at 20% 30%, rgba(30, 60, 100, 0.25) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 70%, rgba(70, 30, 90, 0.25) 0%, transparent 45%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            color: #eef2f8;
+        }
+
+        /* Шапка — центрированный блок с подписью */
+        .header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            width: 100%;
+            max-width: 850px;
+            animation: fadeSlide 0.6s ease-out;
+        }
+
+        .group {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #c0d0e8;
+            text-shadow: 0 0 12px rgba(120, 180, 255, 0.4);
+            margin-bottom: 0.4rem;
+            background: linear-gradient(135deg, #e0ecff, #b0c8ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .name {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #f0f6ff;
+            text-shadow: 0 0 20px rgba(100, 160, 255, 0.5);
+            background: linear-gradient(135deg, #ffffff, #d0e2ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Контейнер для всех аккордеонов — центр страницы */
+        .archive {
+            width: 100%;
+            max-width: 750px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-top: 0.5rem;
+            animation: fadeSlide 0.7s ease-out 0.1s both;
+        }
+
+        /* Элемент списка (аккордеон) */
+        .accordion-item {
+            background: rgba(20, 30, 45, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(130, 180, 255, 0.2);
+            border-radius: 28px;
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(200, 220, 255, 0.05) inset;
+            transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s;
+        }
+
+        .accordion-item:hover {
+            border-color: rgba(130, 180, 255, 0.5);
+            box-shadow: 0 18px 35px -10px rgba(30, 100, 200, 0.35), 0 0 0 1px rgba(180, 210, 255, 0.15) inset;
+            transform: scale(1.005);
+        }
+
+        /* Заголовок кнопки-аккордеона */
+        .accordion-header {
+            all: unset;
+            display: block;
+            width: 100%;
+            padding: 1.5rem 2rem;
+            font-size: 1.35rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #e5edff;
+            cursor: pointer;
+            border-radius: 28px;
+            transition: background 0.25s, color 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .accordion-header:hover {
+            background: rgba(60, 110, 180, 0.2);
+            color: #ffffff;
+        }
+
+        /* Иконка-стрелка */
+        .accordion-header .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            font-size: 1.8rem;
+            font-weight: 300;
+            line-height: 1;
+            color: #9bb9ff;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: rotate(0deg);
+            margin-left: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* Активное состояние — поворот стрелки */
+        .accordion-item.active .accordion-header .icon {
+            transform: rotate(90deg);
+        }
+
+        /* Панель с содержимым (скрыта по умолчанию) */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.45s cubic-bezier(0.33, 1, 0.68, 1), padding 0.3s;
+            padding: 0 2rem;
+            background: rgba(10, 18, 30, 0.6);
+            border-radius: 0 0 28px 28px;
+            border-top: 1px solid rgba(120, 160, 255, 0.1);
+            color: #cbd8f0;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        /* Когда открыт — задаём max-height и отступы */
+        .accordion-item.active .accordion-content {
+            max-height: 400px;      /* достаточно для демо-контента */
+            padding: 1.5rem 2rem 1.8rem 2rem;
+        }
+
+        /* Внутренние списки для красоты (можно заменить своими ссылками) */
+        .accordion-content ul {
+            list-style: none;
+        }
+
+        .accordion-content li {
+            margin: 0.7rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .accordion-content li::before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: #6f9eff;
+            font-weight: bold;
+        }
+
+        .accordion-content a {
+            color: #b8d0ff;
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(150, 190, 255, 0.3);
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .accordion-content a:hover {
+            color: #ffffff;
+            border-bottom-color: #9bb9ff;
+        }
+
+        /* Плавное появление страницы */
+        @keyframes fadeSlide {
+            0% { opacity: 0; transform: translateY(18px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Адаптив для мобильных */
+        @media (max-width: 600px) {
+            body { padding: 1.5rem 1rem; }
+            .group { font-size: 1.4rem; }
+            .name { font-size: 1.5rem; }
+            .accordion-header { padding: 1.2rem 1.2rem; font-size: 1.15rem; }
+            .accordion-content { padding: 0 1.2rem; }
+            .accordion-item.active .accordion-content { padding: 1.2rem 1.2rem 1.4rem 1.2rem; }
+            .header { margin-bottom: 2rem; }
+        }
+
+        @media (max-width: 400px) {
+            .accordion-header { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка с группой и ФИО -->
+    <header class="header">
+        <div class="group">ГРУППА 4ИСИП-1023</div>
+        <div class="name">ЖОГИН АРТЁМ АНДРЕЕВИЧ</div>
+    </header>
+
+    <!-- Блок с аккордеонами (всплывающие списки) -->
+    <div class="archive">
+
+        <!-- УЧЕБНАЯ ПРАКТИКА -->
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                УЧЕБНАЯ ПРАКТИКА
+                <span class="icon" aria-hidden="true">›</span>
+            </button>
+            <div class="accordion-content">
+                <ul>
+                    <li><a href="./Uchebka/UP1.pdf">Аудит</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ДОМАШНИЕ РАБОТЫ -->
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                ДОМАШНИЕ РАБОТЫ
+                <span class="icon" aria-hidden="true">›</span>
+            </button>
+            <div class="accordion-content">
+                <ul>
+                    <li><a href="./Homeworks/analysconc.pdf">Анализ конкурентов</a></li>
+                    <li><a href="./Homeworks/analysreq.pdf">Анализ запросов</a></li>
+                    <li><a href="./Homeworks/robots.pdf">robots.txt приюта Солнцево</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ПРАКТИЧЕСКИЕ РАБОТЫ -->
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                ПРАКТИЧЕСКИЕ РАБОТЫ
+                <span class="icon" aria-hidden="true">›</span>
+            </button>
+            <div class="accordion-content">
+                <ul>
+                    <li><a href="./Practics/PRACTIC1.pdf">Практическая работа №1</a></li>
+                    <li><a href="./Practics/PRACTIC3.pdf">Практическая работа №3</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ЛАБОРАТОРНЫЕ РАБОТЫ -->
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                ЛАБОРАТОРНЫЕ РАБОТЫ
+                <span class="icon" aria-hidden="true">›</span>
+            </button>
+            <div class="accordion-content">
+                <ul>
+                    <li><a href="./Labs/LAB1.pdf">Лабораторная №1</a></li>
+                    <li><a href="./Labs/LAB2.pdf">Лабораторная №2</a></li>
+                    <li><a href="./Labs/LAB3.pdf">Лабораторная №3</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- КОНСПЕКТЫ -->
+        <div class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+                КОНСПЕКТЫ
+                <span class="icon" aria-hidden="true">›</span>
+            </button>
+            <div class="accordion-content">
+                <ul>
+                    <li><a href="./Conspects/GOSTS.pdf">ГОСТЫ 19 И 34</a></li>
+                    <li><a href="./Conspects/SHABLONI.pdf">Шаблоны проекта</a></li>
+                    <li><a href="./Conspects/ULUCHSENIE.pdf">Улучшение внутренней структуры ресурса</a></li>
+                    <li><a href="./Conspects/USKORENIE.pdf">Способы ускорения загрузки сайтов</a></li>
+                    <li><a href="./Conspects/httpJSON.pdf">http и JSON</a></li>
+                    <li><a href="./Conspects/USABILITY.pdf">Юзабилити</a></li>
+                    <li><a href="./Conspects/ADAPTIVE.pdf">Типы адаптивных макетов</a></li>
+                    <li><a href="./Conspects/RELEVAN.pdf">Повышение релевантности страниц</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript для работы аккордеонов -->
+    <script>
+        (function() {
+            const items = document.querySelectorAll('.accordion-item');
+
+            items.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+
+                // Устанавливаем начальное состояние (закрыто)
+                header.setAttribute('aria-expanded', 'false');
+
+                header.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+  
+                    const isActive = item.classList.contains('active');
+                    items.forEach(otherItem => {
+                        otherItem.classList.remove('active');
+                        const otherHeader = otherItem.querySelector('.accordion-header');
+                        if (otherHeader) otherHeader.setAttribute('aria-expanded', 'false');
+                    });
+
+               
+                    if (!isActive) {
+                        item.classList.add('active');
+                        header.setAttribute('aria-expanded', 'true');
+                    }
+               
+                });
+            });
+        })();
+    </script>
+
+</body>
+</html>
